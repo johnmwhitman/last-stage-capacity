@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "last-stage-capacity"
+version = "1.0.0"
+description = "Last-Stage Neural Network Capacity Reduction Library"
+readme = "README.md"
+license = {text = "Apache-2.0"}
+requires-python = ">=3.10"
+dependencies = ["torch", "timm", "numpy"]
+
+[project.urls]
+Homepage = "https://github.com/johnmwhitman/last-stage-capacity"
+Documentation = "https://github.com/johnmwhitman/last-stage-capacity"
