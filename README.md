@@ -1,5 +1,10 @@
 # Last-Stage Capacity Reduction
 
+[![CI](https://github.com/johnmwhitman/last-stage-capacity/actions/workflows/ci.yml/badge.svg)](https://github.com/johnmwhitman/last-stage-capacity/actions/workflows/ci.yml)
+[![PyPI version](https://badge.fury.io/py/last-stage-capacity.svg)](https://badge.fury.io/py/last-stage-capacity)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 Patterns for progressively narrowing neural network representations in the final stages of a model — where compression into task-specific representations happens.
 
 ## Core Principle
@@ -43,7 +48,11 @@ Grounded in: Huang et al., "Exploring Architectural Ingredients of Adversarially
 
 ## Installation
 
-Install from source:
+```bash
+pip install last-stage-capacity
+```
+
+Or install from source:
 
 ```bash
 git clone https://github.com/johnmwhitman/last-stage-capacity.git

@@ -7,13 +7,18 @@ name = "last-stage-capacity"
 version = "1.0.0"
 description = "Last-Stage Neural Network Capacity Reduction Library"
 readme = "README.md"
-license = {text = "Apache-2.0"}
+license = "Apache-2.0"
 requires-python = ">=3.10"
 dependencies = ["torch", "timm", "numpy"]
+authors = [
+  {name = "John Whitman"},
+]
+keywords = ["pytorch", "model-compression", "neural-network", "bottleneck", "width-scaling", "timm"]
 
 [tool.setuptools.packages.find]
 include = ["last_stage_capacity*"]
 
 [project.urls]
 Homepage = "https://github.com/johnmwhitman/last-stage-capacity"
-Documentation = "https://github.com/johnmwhitman/last-stage-capacity"
+Repository = "https://github.com/johnmwhitman/last-stage-capacity"
+Issues = "https://github.com/johnmwhitman/last-stage-capacity/issues"

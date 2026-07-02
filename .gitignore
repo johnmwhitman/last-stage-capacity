@@ -26,3 +26,7 @@ htmlcov/
 # Model weights (downloaded by tests)
 *.pth
 *.safetensors
+# Build outputs
+dist/
+build/
+*.egg-info/
