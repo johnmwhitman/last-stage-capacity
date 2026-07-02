@@ -1,0 +1,58 @@
+[
+  {
+    "width": 1.0,
+    "method": "baseline",
+    "name": "baseline",
+    "params_k": 1557.066,
+    "flops_m": 233.575424,
+    "latency_ms": 1.083417038898915
+  },
+  {
+    "width": 0.75,
+    "method": "last-stage-capacity",
+    "name": "lsc-0.75",
+    "params_k": 877.498,
+    "flops_m": 132.71424,
+    "latency_ms": 0.8052290650084615
+  },
+  {
+    "width": 0.75,
+    "method": "torch-pruning",
+    "name": "tp-0.75",
+    "params_k": 877.498,
+    "flops_m": 132.71424,
+    "latency_ms": 0.7795834681019187
+  },
+  {
+    "width": 0.5,
+    "method": "last-stage-capacity",
+    "name": "lsc-0.5",
+    "params_k": 391.466,
+    "flops_m": 60.164608,
+    "latency_ms": 0.6605624803341925
+  },
+  {
+    "width": 0.5,
+    "method": "torch-pruning",
+    "name": "tp-0.5",
+    "params_k": 391.466,
+    "flops_m": 60.164608,
+    "latency_ms": 0.6403750157915056
+  },
+  {
+    "width": 0.25,
+    "method": "last-stage-capacity",
+    "name": "lsc-0.25",
+    "params_k": 98.97,
+    "flops_m": 15.926528,
+    "latency_ms": 0.4198959795758128
+  },
+  {
+    "width": 0.25,
+    "method": "torch-pruning",
+    "name": "tp-0.25",
+    "params_k": 98.97,
+    "flops_m": 15.926528,
+    "latency_ms": 0.35204156301915646
+  }
+]
