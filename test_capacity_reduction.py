@@ -1,4 +1,4 @@
-"""Test suite for capacity_reduction library."""
+"""Test suite for last_stage_capacity library."""
 import os, sys
 _SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 _PARENT = os.path.dirname(_SCRIPT_DIR)
@@ -7,7 +7,7 @@ if _PARENT not in sys.path:
 
 import torch
 import torch.nn as nn
-from capacity_reduction import (
+from last_stage_capacity import (
     BottleneckBlock, ProgressiveNarrowing, WidthScaler,
     EmbeddingCompressor, DepthwiseFinal, SqueezeExcitation,
     CapacityReductionHead
@@ -129,7 +129,7 @@ def test_backward_pass():
 
 if __name__ == "__main__":
     print("=" * 50)
-    print("capacity_reduction library — test suite")
+    print("last_stage_capacity library — test suite")
     print("=" * 50)
     test_bottleneck_block()
     test_progressive_narrowing()

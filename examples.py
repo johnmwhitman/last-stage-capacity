@@ -3,7 +3,7 @@ Demo: Attaching last-stage capacity reduction to a ResNet backbone.
 Run: python examples.py
 """
 import os, sys
-# Allow running as: python capacity_reduction/examples.py (from echo/)
+# Allow running directly from the repository root.
 _SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 _PARENT = os.path.dirname(_SCRIPT_DIR)
 if _PARENT not in sys.path:
@@ -11,7 +11,7 @@ if _PARENT not in sys.path:
 
 import torch
 import torch.nn as nn
-from capacity_reduction import (
+from last_stage_capacity import (
     BottleneckBlock, ProgressiveNarrowing, DepthwiseFinal,
     EmbeddingCompressor, CapacityReductionHead, WidthScaler
 )

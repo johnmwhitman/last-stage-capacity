@@ -13,16 +13,16 @@ Key integration patterns:
 
 Usage:
     # Head replacement (simplest — works with any classifier model)
-    from capacity_reduction.timm_integration import replace_classifier_head
+    from last_stage_capacity.timm_integration import replace_classifier_head
     model = timm.create_model('resnet50', pretrained=True)
     model = replace_classifier_head(model, hidden_ratio=0.5, dropout=0.2)
 
     # Feature extraction with compression
-    from capacity_reduction.timm_integration import timm_feature_extractor
+    from last_stage_capacity.timm_integration import timm_feature_extractor
     extractor = timm_feature_extractor('resnet50', compress_features=0.5)
 
     # Width reduction across the whole model
-    from capacity_reduction.timm_integration import scale_timm_model_width
+    from last_stage_capacity.timm_integration import scale_timm_model_width
     model = scale_timm_model_width('efficientnet_b0', width_scale=0.75)
 
 Supported model families (verified patterns):
@@ -60,7 +60,7 @@ except ImportError:
     timm = None
     create_model = None
 
-from capacity_reduction import (
+from last_stage_capacity import (
     CapacityReductionHead,
     EmbeddingCompressor,
     SEReduction,
@@ -171,7 +171,7 @@ def replace_classifier_head(
 
     Example:
         >>> import timm
-        >>> from capacity_reduction.timm_integration import replace_classifier_head
+        >>> from last_stage_capacity.timm_integration import replace_classifier_head
         >>> model = timm.create_model('resnet50', pretrained=True)
         >>> model = replace_classifier_head(model, num_classes=10, hidden_ratio=0.5)
         >>> # model.classifier is now a CapacityReductionHead
@@ -486,7 +486,7 @@ def attach_final_stage_reduction(
         reducer = ConditionalCapacityBlock(in_channels, reduction_ratio=reduction_ratio)
     elif block_type == 'linear':
         out_ch = max(1, int(in_channels * reduction_ratio))
-        from capacity_reduction import LinearProjectionReduction
+        from last_stage_capacity import LinearProjectionReduction
         reducer = LinearProjectionReduction(in_channels, out_ch)
     else:
         raise ValueError(f"Unknown block_type: {block_type}")
@@ -807,7 +807,7 @@ def _verify():
     print("Verifying timm_integration module...")
 
     # Check that imports work
-    from capacity_reduction.timm_integration import (
+    from last_stage_capacity.timm_integration import (
         replace_classifier_head,
         timm_feature_extractor,
         scale_timm_model_width,

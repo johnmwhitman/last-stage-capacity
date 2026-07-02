@@ -28,7 +28,7 @@ Classes:
   ConditionalCapacityBlock  — spatial gating: network learns where reduction is safe
   CapacityReductionStack    — progressive narrowing across multiple stages
 
-CLASSIFICATION TRACK (capacity_reduction/*.py)
+CLASSIFICATION TRACK (last_stage_capacity/*.py)
 ----------------------------------------------
 For classification backbones, embedding compression, and classification heads.
 

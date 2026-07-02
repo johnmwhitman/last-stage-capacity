@@ -11,7 +11,7 @@ Classes:
   ConditionalCapacityBlock  - spatial gating: network learns where reduction is safe
   CapacityReductionStack    - progressive narrowing across multiple stages
 
-Moved from last_stage_capacity_reduction.py (repo root) into the capacity_reduction
+Moved from last_stage_capacity_reduction.py (repo root) into the last_stage_capacity
 package on 2026-05-17 to fix broken import chain for timm_integration.py.
 """
 

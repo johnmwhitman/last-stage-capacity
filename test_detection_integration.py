@@ -12,20 +12,15 @@ These tests validate that capacity reduction blocks work in realistic model
 pipelines against real torchvision models — not synthetic unit tests.
 This closes the integration test gap in BL-AUTO-2146.
 
-Run: python capacity_reduction/test_detection_integration.py
+Run: python test_detection_integration.py
 """
-import sys
-from pathlib import Path
-_echo_root = Path(__file__).parent.parent
-sys.path.insert(0, str(_echo_root))
-
 import torch
 import torch.nn as nn
 from torchvision.models.detection import retinanet_resnet50_fpn, RetinaNet_ResNet50_FPN_Weights
 from torchvision.models.detection import fasterrcnn_resnet50_fpn, FasterRCNN_ResNet50_FPN_Weights
 from torchvision.models.segmentation import deeplabv3_resnet50, DeepLabV3_ResNet50_Weights
 
-from capacity_reduction._detection import (
+from last_stage_capacity._detection import (
     LinearProjectionReduction,
     SEReduction,
     ConditionalCapacityBlock,

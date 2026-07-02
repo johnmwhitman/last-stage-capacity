@@ -11,6 +11,9 @@ license = {text = "Apache-2.0"}
 requires-python = ">=3.10"
 dependencies = ["torch", "timm", "numpy"]
 
+[tool.setuptools.packages.find]
+include = ["last_stage_capacity*"]
+
 [project.urls]
 Homepage = "https://github.com/johnmwhitman/last-stage-capacity"
 Documentation = "https://github.com/johnmwhitman/last-stage-capacity"

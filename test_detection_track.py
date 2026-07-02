@@ -3,17 +3,11 @@ Tests for the Detection Track — last-stage capacity reduction for detection ne
 
 Tests: LinearProjectionReduction, SEReduction, ConditionalCapacityBlock, CapacityReductionStack
 
-Run: python capacity_reduction/test_detection_track.py
+Run: python test_detection_track.py
 """
-import sys
-from pathlib import Path
-# Ensure C:/AI/agents/echo is in path regardless of OS
-_echo_root = Path(__file__).parent.parent
-sys.path.insert(0, str(_echo_root))
-
 import torch
 import torch.nn as nn
-from capacity_reduction._detection import (
+from last_stage_capacity._detection import (
     LinearProjectionReduction,
     SEReduction,
     ConditionalCapacityBlock,

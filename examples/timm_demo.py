@@ -3,9 +3,11 @@ Demo: timm integration with real pretrained model.
 Shows attaching last-stage reduction to a pretrained ResNet18.
 """
 import sys
-sys.path.insert(0, "C:/AI/agents/echo")
+from pathlib import Path
 
-from capacity_reduction.timm_integration import (
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from last_stage_capacity.timm_integration import (
     describe_timm_model,
     attach_final_stage_reduction,
     scale_timm_model_width,

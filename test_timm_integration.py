@@ -11,7 +11,7 @@ except ImportError:
     print('timm NOT available — skipping timm integration test')
     sys.exit(0)
 
-from capacity_reduction.timm_integration import attach_final_stage_reduction
+from last_stage_capacity.timm_integration import attach_final_stage_reduction
 
 # Test with resnet18
 print('\n--- Testing attach_final_stage_reduction on ResNet18 ---')

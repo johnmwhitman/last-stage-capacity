@@ -4,7 +4,7 @@ sys.path.insert(0, '.')
 import torch
 import timm
 
-from capacity_reduction.timm_integration import attach_final_stage_reduction
+from last_stage_capacity.timm_integration import attach_final_stage_reduction
 
 print('Testing EfficientNet-B0...')
 model = timm.create_model('efficientnet_b0', pretrained=False)
