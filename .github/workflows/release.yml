@@ -29,16 +29,29 @@ jobs:
       - name: Build sdist and wheel
         run: python -m build
 
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          if-no-files-found: error
+          retention-days: 90
+
       - name: Publish to PyPI (trusted publishing)
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: dist/
           # No token needed — uses GitHub OIDC + PyPI trusted publishing
           # See: https://docs.pypi.org/trusted-publishers/
+        continue-on-error: true
+        # If trusted publishing isn't configured yet, the upload-artifact
+        # step above preserves the built artifacts so they can be uploaded
+        # manually via `twine upload dist/*` from the workflow run page.
 
   github-release:
     name: Create GitHub release
     needs: release
+    if: success()
     runs-on: ubuntu-latest
     permissions:
       contents: write
