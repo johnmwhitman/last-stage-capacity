@@ -1,0 +1,101 @@
+Metadata-Version: 2.4
+Name: last-stage-capacity
+Version: 1.0.1
+Summary: Last-Stage Neural Network Capacity Reduction Library
+License: Apache-2.0
+Project-URL: Homepage, https://hool.dev/about/
+Project-URL: Repository, https://github.com/johnmwhitman/last-stage-capacity
+Project-URL: Issues, https://github.com/johnmwhitman/last-stage-capacity/issues
+Project-URL: Author profile, https://hool.dev/about/
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: torch
+Requires-Dist: timm
+Requires-Dist: numpy
+Dynamic: license-file
+
+# Last-Stage Capacity Reduction Library
+
+[![PyPI version](https://badge.fury.io/py/last-stage-capacity.svg)](https://pypi.org/project/last-stage-capacity/)
+[![CI](https://github.com/johnmwhitman/last-stage-capacity/actions/workflows/ci.yml/badge.svg)](https://github.com/johnmwhitman/last-stage-capacity/actions)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
+Patterns for progressively narrowing neural network representations in the later stages of a model.
+
+---
+
+## Core Principle
+
+Early layers capture low-level features; later layers must compress these into task-specific representations. Strategic narrowing at this stage forces beneficial compression, improves regularization, and reduces inference cost without significant accuracy loss.
+
+Grounded in: Huang et al., ["Exploring Architectural Ingredients of Adversarially Robust DNNs"](https://arxiv.org/abs/2111.11553) (NeurIPS 2021).
+
+## Installation
+
+```bash
+pip install last-stage-capacity
+```
+
+Or install from source:
+
+```bash
+git clone https://github.com/johnmwhitman/last-stage-capacity.git
+cd last-stage-capacity
+pip install -e .
+```
+
+## Library Structure
+
+- `capacity_reduction/`: Core library (last-stage capacity detection and reduction)
+- `examples/`: Usage examples
+- `tests/`: Test suite
+
+## Usage
+
+```python
+from last_stage_capacity import LastStageCapacity
+
+# Analyze a model's last-stage capacity
+analyzer = LastStageCapacity(model)
+report = analyzer.benchmark()
+```
+
+## Benchmarks
+
+Benchmark scripts and reference numbers are being computed against `torch-pruning` and
+the timm model zoo. The latest reproducible results live in `benchmarks/`.
+
+Initial scope: ResNet-50 on ImageNet-1k, comparing the four reduction strategies
+(bottleneck, progressive narrowing, SE-reduction, conditional) against the
+unmodified baseline. Numbers will land in the next minor release.
+
+## Related Work
+
+- [agent-mesh](https://github.com/johnmwhitman/agent-mesh) — fleet-native agent
+  orchestration for OpenCode. MIT.
+- [Accumulated](https://john0whitman.substack.com) — John's Substack on
+  autonomous systems and the seven-layer framework.
+
+## Citation
+
+If this library is useful in your work:
+
+```bibtex
+@software{whitman2026laststagecapacity,
+  author = {Whitman, John},
+  title = {last-stage-capacity: Progressive Narrowing for Inference-Efficient CNNs and Transformers},
+  year = {2026},
+  url = {https://github.com/johnmwhitman/last-stage-capacity}
+}
+```
+
+## Maintainer
+
+[John Whitman](https://hool.dev/about/) — Director of Product Management, America's Car-Mart.
+Writes at [Accumulated](https://john0whitman.substack.com).
+
+## License
+
+Apache-2.0. See [LICENSE](./LICENSE) for the full text.

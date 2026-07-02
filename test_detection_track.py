@@ -13,7 +13,7 @@ sys.path.insert(0, str(_echo_root))
 
 import torch
 import torch.nn as nn
-from capacity_reduction._detection import (
+from last_stage_capacity._detection import (
     LinearProjectionReduction,
     SEReduction,
     ConditionalCapacityBlock,

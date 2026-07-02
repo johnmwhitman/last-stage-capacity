@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "last-stage-capacity"
-version = "1.0.0"
+version = "1.0.1"
 description = "Last-Stage Neural Network Capacity Reduction Library"
 readme = "README.md"
 license = {text = "Apache-2.0"}
@@ -16,3 +16,6 @@ Homepage = "https://hool.dev/about/"
 "Repository" = "https://github.com/johnmwhitman/last-stage-capacity"
 "Issues" = "https://github.com/johnmwhitman/last-stage-capacity/issues"
 "Author profile" = "https://hool.dev/about/"
+
+[tool.setuptools]
+packages = ["last_stage_capacity"]

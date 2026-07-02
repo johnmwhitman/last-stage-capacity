@@ -1,0 +1,12 @@
+LICENSE
+README.md
+pyproject.toml
+last_stage_capacity/__init__.py
+last_stage_capacity/_detection.py
+last_stage_capacity/examples.py
+last_stage_capacity/timm_integration.py
+last_stage_capacity.egg-info/PKG-INFO
+last_stage_capacity.egg-info/SOURCES.txt
+last_stage_capacity.egg-info/dependency_links.txt
+last_stage_capacity.egg-info/requires.txt
+last_stage_capacity.egg-info/top_level.txt
