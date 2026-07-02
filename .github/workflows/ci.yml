@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: test (${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install uv
+        run: pip install uv
+
+      - name: Install package + test deps
+        run: |
+          uv venv --python ${{ matrix.python-version }} .venv
+          source .venv/bin/activate
+          uv pip install -e .
+          uv pip install pytest torchvision
+
+      - name: Run core tests
+        run: |
+          source .venv/bin/activate
+          pytest test_capacity_reduction.py test_detection_track.py -v
+
+      - name: Run integration tests
+        run: |
+          source .venv/bin/activate
+          pytest test_detection_integration.py -v
+        continue-on-error: false
+
+      - name: Run timm integration tests
+        run: |
+          source .venv/bin/activate
+          pytest test_timm_integration.py test_efficientnet_reduction.py test_vit_convnext.py -v
+        continue-on-error: false
