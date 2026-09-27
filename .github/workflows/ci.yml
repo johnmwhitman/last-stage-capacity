@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    name: Test (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.10', '3.11', '3.12']
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install CPU PyTorch
+        run: |
+          pip install --extra-index-url https://download.pytorch.org/whl/cpu torch
+
+      - name: Install dependencies
+        run: |
+          pip install timm numpy pytest
+
+      - name: Install editable package
+        run: |
+          pip install -e .
+
+      - name: Run tests
+        run: |
+          pytest test_*.py -v
