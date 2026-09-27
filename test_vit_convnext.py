@@ -9,7 +9,7 @@ sys.path.insert(0, 'C:/AI/agents/echo')
 import torch
 import timm
 
-from capacity_reduction.timm_integration import (
+from last_stage_capacity.timm_integration import (
     describe_timm_model,
     attach_final_stage_reduction,
     replace_classifier_head,
