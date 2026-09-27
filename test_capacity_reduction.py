@@ -7,7 +7,7 @@ if _PARENT not in sys.path:
 
 import torch
 import torch.nn as nn
-from capacity_reduction import (
+from last_stage_capacity import (
     BottleneckBlock, ProgressiveNarrowing, WidthScaler,
     EmbeddingCompressor, DepthwiseFinal, SqueezeExcitation,
     CapacityReductionHead

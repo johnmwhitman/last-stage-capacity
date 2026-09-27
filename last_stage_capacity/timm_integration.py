@@ -60,7 +60,7 @@ except ImportError:
     timm = None
     create_model = None
 
-from capacity_reduction import (
+from . import (
     CapacityReductionHead,
     EmbeddingCompressor,
     SEReduction,
@@ -486,7 +486,7 @@ def attach_final_stage_reduction(
         reducer = ConditionalCapacityBlock(in_channels, reduction_ratio=reduction_ratio)
     elif block_type == 'linear':
         out_ch = max(1, int(in_channels * reduction_ratio))
-        from capacity_reduction import LinearProjectionReduction
+        from . import LinearProjectionReduction
         reducer = LinearProjectionReduction(in_channels, out_ch)
     else:
         raise ValueError(f"Unknown block_type: {block_type}")
@@ -807,7 +807,7 @@ def _verify():
     print("Verifying timm_integration module...")
 
     # Check that imports work
-    from capacity_reduction.timm_integration import (
+    from last_stage_capacity.timm_integration import (
         replace_classifier_head,
         timm_feature_extractor,
         scale_timm_model_width,

@@ -25,7 +25,7 @@ from torchvision.models.detection import retinanet_resnet50_fpn, RetinaNet_ResNe
 from torchvision.models.detection import fasterrcnn_resnet50_fpn, FasterRCNN_ResNet50_FPN_Weights
 from torchvision.models.segmentation import deeplabv3_resnet50, DeepLabV3_ResNet50_Weights
 
-from capacity_reduction._detection import (
+from last_stage_capacity._detection import (
     LinearProjectionReduction,
     SEReduction,
     ConditionalCapacityBlock,
