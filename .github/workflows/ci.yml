@@ -39,6 +39,15 @@ jobs:
           uv pip install -e .
           uv pip install pytest torchvision
 
+      - name: Record installed ML dependency versions
+        run: |
+          source .venv/bin/activate
+          python - <<'PY'
+          from importlib.metadata import version
+          for package in ("torch", "timm", "numpy"):
+              print(f"{package}=={version(package)}")
+          PY
+
       - name: Run core tests
         run: |
           source .venv/bin/activate
@@ -49,6 +58,17 @@ jobs:
           source .venv/bin/activate
           pytest test_detection_integration.py -v
         continue-on-error: false
+
+      - name: Run script tests
+        run: |
+          source .venv/bin/activate
+          pytest test_scripts.py -v
+        continue-on-error: false
+
+      - name: Run CPU scaling diagnostic
+        run: |
+          source .venv/bin/activate
+          python debug_scale.py
 
       - name: Run timm integration tests
         run: |
