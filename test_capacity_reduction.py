@@ -72,6 +72,86 @@ def test_width_scaler():
     print(f'WidthScaler: {x.shape} -> {out.shape}, params {orig_params} -> {scaled_params} ✓')
 
 
+def test_width_scaler_invalid_scale():
+    """WidthScaler with width_scale <= 0 must raise ValueError."""
+    m = nn.Sequential(nn.Conv2d(16, 16, 3, padding=1))
+    try:
+        WidthScaler(m, 0)
+        assert False, "Expected ValueError for width_scale=0"
+    except ValueError:
+        pass
+
+    try:
+        WidthScaler(m, -0.5)
+        assert False, "Expected ValueError for width_scale < 0"
+    except ValueError:
+        pass
+
+
+def test_width_scaler_conv2d_groups_and_dilation():
+    """WidthScaler preserves groups and dilation, and enforces depthwise/grouped contracts."""
+    # 1. Depthwise convolution: groups == in_channels == out_channels
+    # Scaled within a Sequential chain so in_channels matches out_channels
+    dw_seq = nn.Sequential(
+        nn.Conv2d(64, 32, 1),
+        nn.Conv2d(32, 32, 3, padding=2, dilation=2, groups=32),
+    )
+    scaled_dw = WidthScaler(dw_seq, 0.5)
+    # First conv becomes in_channels=64, out_channels=16
+    # Second conv becomes in_channels=16, out_channels=16, groups=16, dilation=(2, 2)
+    dw_layer = scaled_dw.module[1]
+    assert dw_layer.in_channels == 16
+    assert dw_layer.out_channels == 16
+    assert dw_layer.groups == 16
+    assert dw_layer.groups == dw_layer.in_channels == dw_layer.out_channels
+    assert dw_layer.dilation == (2, 2)
+
+    # Test forward pass with synthetic tensor
+    x = torch.randn(2, 64, 16, 16)
+    out = scaled_dw(x)
+    assert out.shape == (2, 16, 16, 16), f"Expected (2, 16, 16, 16), got {out.shape}"
+
+    # 2. Depthwise Conv2d that cannot scale to equal in/out channels raises ValueError
+    # Case A: in_channels scaled to 16, but out_channels scaled to 32
+    bad_dw_seq = nn.Sequential(
+        nn.Conv2d(64, 32, 1),
+        nn.Conv2d(64, 64, 3, padding=1, groups=64),
+    )
+    try:
+        WidthScaler(bad_dw_seq, 0.5)
+        assert False, "Expected ValueError when depthwise conv cannot scale to equal in/out channels"
+    except ValueError:
+        pass
+
+    # Case B: isolated depthwise conv where scale would produce unequal in/out channels
+    isolated_dw = nn.Conv2d(16, 16, 3, padding=1, groups=16)
+    try:
+        WidthScaler(isolated_dw, 0.5)
+        assert False, "Expected ValueError when isolated depthwise conv in_channels != scaled out_channels"
+    except ValueError:
+        pass
+
+    # 3. Grouped convolution: preserves groups and dilation when valid
+    grouped = nn.Conv2d(32, 32, 3, padding=2, dilation=2, groups=4)
+    scaled_grp = WidthScaler(grouped, 0.5)
+    assert scaled_grp.module.groups == 4
+    assert scaled_grp.module.dilation == (2, 2)
+    assert scaled_grp.module.in_channels == 32
+    assert scaled_grp.module.out_channels == 16
+    x_grp = torch.randn(2, 32, 8, 8)
+    out_grp = scaled_grp(x_grp)
+    assert out_grp.shape == (2, 16, 8, 8), f"Expected (2, 16, 8, 8), got {out_grp.shape}"
+
+    # 4. Grouped convolution where channels not divisible by groups raises ValueError
+    bad_grouped = nn.Conv2d(36, 36, 3, groups=6)
+    try:
+        # out_channels = max(1, int(36 * 0.25)) = 9, 9 % 6 != 0
+        WidthScaler(bad_grouped, 0.25)
+        assert False, "Expected ValueError when channels not divisible by groups"
+    except ValueError:
+        pass
+
+
 def test_capacity_reduction_head():
     head = CapacityReductionHead(768, 1000)
     x = torch.randn(8, 768)

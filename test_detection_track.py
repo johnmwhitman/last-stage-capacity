@@ -49,6 +49,21 @@ def test_linear_projection_reduction():
     print("  LinearProjectionReduction backward: ✓")
 
 
+def test_linear_projection_reduction_invalid_out_channels():
+    """LinearProjectionReduction: out_channels <= 0 must raise ValueError."""
+    try:
+        LinearProjectionReduction(64, 0)
+        assert False, "Expected ValueError for out_channels=0"
+    except ValueError:
+        pass
+
+    try:
+        LinearProjectionReduction(64, -8)
+        assert False, "Expected ValueError for out_channels < 0"
+    except ValueError:
+        pass
+
+
 def test_se_reduction():
     """SEReduction: Squeeze-and-Excitation channel attention + channel reduction."""
     m = SEReduction(in_channels=256, reduction_ratio=0.25)
