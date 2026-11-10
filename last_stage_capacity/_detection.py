@@ -42,6 +42,8 @@ class LinearProjectionReduction(nn.Module):
         bias: bool = True,
     ):
         super().__init__()
+        if out_channels <= 0:
+            raise ValueError(f"out_channels must be > 0, got {out_channels}")
         if out_channels >= in_channels:
             raise ValueError(
                 f"out_channels ({out_channels}) must be < in_channels ({in_channels}). "

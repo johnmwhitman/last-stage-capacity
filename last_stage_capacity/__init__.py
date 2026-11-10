@@ -196,6 +196,8 @@ class WidthScaler(nn.Module):
 
     def __init__(self, module: nn.Module, width_scale: float):
         super().__init__()
+        if width_scale <= 0:
+            raise ValueError(f"width_scale must be > 0, got {width_scale}")
         import copy
         # Work on a deep copy so the original module is preserved.
         # This allows callers to compare original.parameters() vs scaled.parameters().
@@ -246,6 +248,40 @@ class WidthScaler(nn.Module):
         return isinstance(layer, (nn.Conv2d, nn.Linear, nn.BatchNorm2d,
                                    nn.BatchNorm1d, nn.LayerNorm))
 
+    def _build_scaled_conv2d(self, layer: nn.Conv2d, scale: float,
+                            in_c: int) -> tuple[nn.Conv2d, int]:
+        out_c = max(1, int(layer.out_channels * scale))
+        groups = layer.groups
+        dilation = layer.dilation
+
+        if groups == layer.in_channels == layer.out_channels:
+            # Depthwise conv
+            if in_c != out_c:
+                raise ValueError(
+                    f"Depthwise Conv2d cannot scale to unequal in_channels ({in_c}) "
+                    f"and out_channels ({out_c})."
+                )
+            groups = in_c
+        elif groups > 1:
+            if in_c % groups != 0 or out_c % groups != 0:
+                raise ValueError(
+                    f"Grouped Conv2d channels (in_channels={in_c}, out_channels={out_c}) "
+                    f"not divisible by groups={groups}."
+                )
+
+        return (
+            nn.Conv2d(
+                in_c, out_c,
+                kernel_size=layer.kernel_size,
+                stride=layer.stride,
+                padding=layer.padding,
+                dilation=dilation,
+                groups=groups,
+                bias=layer.bias is not None,
+            ),
+            out_c,
+        )
+
     def _build_scaled_layer(self, layer: nn.Module, scale: float, prev_out_channels: int | None = None) -> tuple[nn.Module, int | None]:
         """
         Rebuild a layer with scaled channel dimensions.
@@ -256,17 +292,7 @@ class WidthScaler(nn.Module):
         """
         if isinstance(layer, nn.Conv2d):
             in_c = prev_out_channels if prev_out_channels is not None else layer.in_channels
-            out_c = max(1, int(layer.out_channels * scale))
-            return (
-                nn.Conv2d(
-                    in_c, out_c,
-                    kernel_size=layer.kernel_size,
-                    stride=layer.stride,
-                    padding=layer.padding,
-                    bias=layer.bias is not None,
-                ),
-                out_c,
-            )
+            return self._build_scaled_conv2d(layer, scale, in_c)
         elif isinstance(layer, nn.Linear):
             # Linear layers: in_features = prev (scaled channel count from preceding layer).
             # out_features is preserved (e.g. num_classes = 1000 for classifier head).
@@ -369,11 +395,8 @@ class WidthScaler(nn.Module):
 
             if isinstance(child, nn.Conv2d):
                 in_c = block_prev_out if block_prev_out is not None else child.in_channels
-                out_c = max(1, int(child.out_channels * scale))
-                new_block.register_module(name, nn.Conv2d(
-                    in_c, out_c, kernel_size=child.kernel_size,
-                    stride=child.stride, padding=child.padding,
-                    bias=child.bias is not None))
+                new_conv, out_c = self._build_scaled_conv2d(child, scale, in_c)
+                new_block.register_module(name, new_conv)
                 prev_conv_output = out_c
                 block_prev_out = out_c
 
