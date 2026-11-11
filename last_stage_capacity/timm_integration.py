@@ -182,8 +182,9 @@ def replace_classifier_head(
         raise ImportError("timm is not installed. Install with: pip install timm")
 
     if isinstance(model, str):
-        model = timm.create_model(model, pretrained=False)
-        model_name = model.name_or_class if hasattr(model, 'name_or_class') else model
+        model_str = model
+        model = timm.create_model(model_str, pretrained=False)
+        model_name = model.name_or_class if hasattr(model, 'name_or_class') else model_str
     else:
         model_name = model.name_or_class if hasattr(model, 'name_or_class') else ''
 
