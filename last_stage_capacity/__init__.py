@@ -196,6 +196,8 @@ class WidthScaler(nn.Module):
 
     def __init__(self, module: nn.Module, width_scale: float):
         super().__init__()
+        if width_scale <= 0:
+            raise ValueError(f"width_scale must be positive, got {width_scale}")
         import copy
         # Work on a deep copy so the original module is preserved.
         # This allows callers to compare original.parameters() vs scaled.parameters().
@@ -257,12 +259,32 @@ class WidthScaler(nn.Module):
         if isinstance(layer, nn.Conv2d):
             in_c = prev_out_channels if prev_out_channels is not None else layer.in_channels
             out_c = max(1, int(layer.out_channels * scale))
+            if layer.groups == layer.in_channels and layer.groups == layer.out_channels:
+                if in_c == out_c:
+                    new_groups = in_c
+                else:
+                    raise ValueError(
+                        f"Cannot scale depthwise Conv2d (groups={layer.groups}) to in_channels={in_c} "
+                        f"and out_channels={out_c}: depthwise conv requires in_channels == out_channels == groups."
+                    )
+            elif layer.groups > 1:
+                if in_c % layer.groups == 0 and out_c % layer.groups == 0:
+                    new_groups = layer.groups
+                else:
+                    raise ValueError(
+                        f"Cannot scale grouped Conv2d (groups={layer.groups}) with in_channels={in_c} "
+                        f"and out_channels={out_c}: channels must be divisible by groups."
+                    )
+            else:
+                new_groups = 1
             return (
                 nn.Conv2d(
                     in_c, out_c,
                     kernel_size=layer.kernel_size,
                     stride=layer.stride,
                     padding=layer.padding,
+                    dilation=layer.dilation,
+                    groups=new_groups,
                     bias=layer.bias is not None,
                 ),
                 out_c,
@@ -370,9 +392,28 @@ class WidthScaler(nn.Module):
             if isinstance(child, nn.Conv2d):
                 in_c = block_prev_out if block_prev_out is not None else child.in_channels
                 out_c = max(1, int(child.out_channels * scale))
+                if child.groups == child.in_channels and child.groups == child.out_channels:
+                    if in_c == out_c:
+                        new_groups = in_c
+                    else:
+                        raise ValueError(
+                            f"Cannot scale depthwise Conv2d (groups={child.groups}) to in_channels={in_c} "
+                            f"and out_channels={out_c}: depthwise conv requires in_channels == out_channels == groups."
+                        )
+                elif child.groups > 1:
+                    if in_c % child.groups == 0 and out_c % child.groups == 0:
+                        new_groups = child.groups
+                    else:
+                        raise ValueError(
+                            f"Cannot scale grouped Conv2d (groups={child.groups}) with in_channels={in_c} "
+                            f"and out_channels={out_c}: channels must be divisible by groups."
+                        )
+                else:
+                    new_groups = 1
                 new_block.register_module(name, nn.Conv2d(
                     in_c, out_c, kernel_size=child.kernel_size,
                     stride=child.stride, padding=child.padding,
+                    dilation=child.dilation, groups=new_groups,
                     bias=child.bias is not None))
                 prev_conv_output = out_c
                 block_prev_out = out_c
