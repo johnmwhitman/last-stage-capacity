@@ -92,6 +92,29 @@ def test_vit_replace_head():
     print('  PASS')
 
 
+def test_replace_classifier_head_unresolvable_raises_value_error():
+    """A string model name whose architecture cannot be resolved raises ValueError."""
+    import pytest
+    from unittest.mock import patch, MagicMock
+
+    mock_model = MagicMock(spec=torch.nn.Module)
+    del mock_model.name_or_class
+    del mock_model.num_classes
+    del mock_model.num_features
+    del mock_model.feature_dim
+    del mock_model.embed_dim
+    del mock_model.class_dim
+    del mock_model.classifier
+    del mock_model.fc
+    del mock_model.head
+
+    with patch('timm.create_model', return_value=mock_model) as mock_create:
+        with pytest.raises(ValueError) as excinfo:
+            replace_classifier_head('unknown_custom_model_xyz')
+        mock_create.assert_called_once_with('unknown_custom_model_xyz', pretrained=False)
+        assert "Cannot resolve feature dimension for model 'unknown_custom_model_xyz'" in str(excinfo.value)
+
+
 if __name__ == '__main__':
     test_describe_vit()
     test_describe_convnext()
@@ -99,6 +122,7 @@ if __name__ == '__main__':
     test_convnext_attach_reduction()
     test_convnext_conditional_reduction()
     test_vit_replace_head()
+    test_replace_classifier_head_unresolvable_raises_value_error()
     print('\n' + '=' * 50)
     print('ALL TESTS PASSED')
     print('=' * 50)
